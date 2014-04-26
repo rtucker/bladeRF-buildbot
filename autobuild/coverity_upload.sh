@@ -52,8 +52,6 @@ echo "Uploading revision: ${LATEST_TARGET}"
 echo "Version: ${VERSION}"
 echo ""
 
-exit 0
-
 curl --form project=bladeRF \
      --form token=${TOKEN} \
      --form email=${EMAIL} \
@@ -63,4 +61,3 @@ curl --form project=bladeRF \
      http://scan5.coverity.com/cgi-bin/upload.py || exit 1
 
 echo "${LATEST_TARGET}" > ${LAST_UPLOAD_FILE}
-
