@@ -1,5 +1,5 @@
 #!/bin/bash
-WORKDIR="/srv/bladerf"
+[ -z "$WORKDIR" ] && WORKDIR=/srv/bladerf
 COVERITY_REVISION="$(cat $WORKDIR/.coverity_last_upload)"
 
 cd $WORKDIR

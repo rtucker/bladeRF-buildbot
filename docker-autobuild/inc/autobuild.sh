@@ -1,5 +1,7 @@
 #!/bin/bash
 
+[ -z "$WORKDIR" ] && WORKDIR=/srv/bladerf
+
 # Read in our library of useful functions
 . ${BINDIR}/autobuild_inc.sh
 

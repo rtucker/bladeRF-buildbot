@@ -3,7 +3,7 @@
 set -e
 
 # Clean out old builds...
-WORKDIR=/srv/bladerf
+[ -z "$WORKDIR" ] && WORKDIR=/srv/bladerf
 
 # Nuke all but the latest build dirs after a few hours
 LATESTTARGET=$(stat --format="%N" ${WORKDIR}/builds/latest | cut -d'`' -f3 | cut -d"'" -f1)
