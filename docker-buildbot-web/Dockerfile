@@ -2,11 +2,10 @@
 
 # VERSION 0.0.1
 
-# Build using: docker build -t bladerf-buildbot-web .
-# Run using:  docker run --rm --volumes-from BLADERF-AUTOBUILDER --name BLADERF-WEB bladerf-buildbot-web
-
 FROM ubuntu
 MAINTAINER Ryan Tucker <rtucker@gmail.com>
+
+VOLUME ["/var/log/nginx"]
 
 RUN apt-get update
 RUN apt-get install -y nginx
