@@ -65,32 +65,34 @@ function clone_build_dir() {
 }
 
 # prep_build: Prepares a build subdirectory within the source tree.
-# Optional arg: build_type
+# args: [buildtype [gitrevision [cmake arguments ...]]]
 function prep_build() {
     if [ -z "$1" ]; then
         _build_type="Release"
     else
         _build_type="$1"
+        shift
     fi
 
-    if [ -z "$2" ]; then
+    if [ -z "$1" ]; then
         _git_revision="unknown"
     else
-        _git_revision="$2"
+        _git_revision="$1"
+        shift
     fi
 
     # Hack CMakeLists as required
-    for dir in host fx3_firmware host/libraries/libbladeRF
-    do
-        qpushd $dir
-            _CMAKE_CLD=`pwd`           # remember where we are...
-            sed --in-place=.bak --expression="s:\${CMAKE_CURRENT_LIST_DIR}:${_CMAKE_CLD}:g" \
-                                --expression="s:cmake_minimum_required(VERSION 2.8.3):cmake_minimum_required(VERSION 2.8):g" \
-                                --expression="s:include(GNUInstallDirs):\#include(GNUInstallDirs):g" \
-                                --expression="s:cmake_minimum_required(VERSION 2.8.5):cmake_minimum_required(VERSION 2.8):g" \
-                                CMakeLists.txt
-        qpopd
-    done
+    #for dir in host fx3_firmware host/libraries/libbladeRF
+    #do
+    #    qpushd $dir
+    #        _CMAKE_CLD=`pwd`           # remember where we are...
+    #        sed --in-place=.bak --expression="s:\${CMAKE_CURRENT_LIST_DIR}:${_CMAKE_CLD}:g" \
+    #                            --expression="s:cmake_minimum_required(VERSION 2.8.3):cmake_minimum_required(VERSION 2.8):g" \
+    #                            --expression="s:include(GNUInstallDirs):\#include(GNUInstallDirs):g" \
+    #                            --expression="s:cmake_minimum_required(VERSION 2.8.5):cmake_minimum_required(VERSION 2.8):g" \
+    #                            CMakeLists.txt
+    #    qpopd
+    #done
 
     # We're running the Lunix here
     qpushd fx3_firmware
@@ -107,7 +109,7 @@ function prep_build() {
               -DCMAKE_BUILD_TYPE=${_build_type} \
               -DVERSION_INFO_OVERRIDE:STRING=git-${_git_revision}-buildomatic \
               -DBUILD_DOCUMENTATION=YES \
-              -DENABLE_FX3_BUILD=ON \
+              -DENABLE_FX3_BUILD=ON $* \
               ../
     qpopd
 }

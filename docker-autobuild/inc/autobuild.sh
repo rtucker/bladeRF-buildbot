@@ -140,7 +140,7 @@ then
     clone_build_dir ${WORKDIR}/bladeRF ${REVBUILDS_DIR} ${build_dir} ${REVID}
 
     cd ${REVBUILDS_DIR}/${build_dir}
-    prep_build Release ${REVID::7}
+    prep_build Release ${REVID::7} -DBUILD_DOCUMENTATION=OFF
     build_coverity_tarball
 
     if [ -z "$_result" ] || [ ! -f "$_result" ]
