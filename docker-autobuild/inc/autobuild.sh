@@ -5,9 +5,10 @@
 # Read in our library of useful functions
 . ${BINDIR}/autobuild_inc.sh
 
-# Update repo and get the latest revision
+# Update repo and get the latest revision.
+# Or, if there's a revision on the command line, use that.
 update_master_repo ${WORKDIR}/bladeRF
-get_commit_id ${WORKDIR}/bladeRF
+get_commit_id ${WORKDIR}/bladeRF $1
 REVID=$_result
 [ -z "$REVID" ] && echo "Couldn't get latest revision ID" && exit 1
 
@@ -40,7 +41,7 @@ echo "Quartus Version:"
 ${QUARTUS_PATH}/nios2eds/nios2_command_shell.sh ${QUARTUS_PATH}/quartus/bin/quartus_sh --version
 echo ""
 echo "Disk summary:"
-df -h
+df -h .
 echo ""
 echo "Memory summary:"
 free -m
@@ -160,7 +161,7 @@ echo "Time:         $(date)"
 echo "Uptime:       $(uptime)"
 echo ""
 echo "Disk summary:"
-df -h
+df -h .
 echo ""
 echo "Memory summary:"
 free -m

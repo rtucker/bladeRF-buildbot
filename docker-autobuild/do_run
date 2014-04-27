@@ -1,2 +1,2 @@
 #!/bin/sh
-sudo docker.io run --detach --volumes-from BLADERF-BUILDTOOLS --name BLADERF-AUTOBUILDER bladerf-autobuild
+sudo docker.io run --detach -v /opt:/opt:ro -v /srv/bladerf:/srv/bladerf:rw --name BLADERF-AUTOBUILDER bladerf-autobuild

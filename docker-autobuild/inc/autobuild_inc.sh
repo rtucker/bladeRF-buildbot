@@ -12,6 +12,7 @@ function qpopd() {
 function update_master_repo() {
     if [ -z "$1" ]; then
         echo "update_master_repo: missing path to repository"
+        exit 1
     fi
 
     if [ -d "$1" ]; then
@@ -24,15 +25,21 @@ function update_master_repo() {
 }
 
 # get_commit_id: Echos the HEAD commit for the repo
-# Args: repo_dir
+# Args: repo_dir [revision]
 function get_commit_id() {
     if [ -z "$1" ]; then
         echo "get_commit_id: missing directory"
         exit 1
     fi
 
+    if [ -z "$2" ]; then
+        _rev=${REVISION}
+    else
+        _rev=$2
+    fi
+
     qpushd $1
-        _result=$(git rev-list ${REVISION} -n 1)
+        _result=$(git rev-list ${_rev} -n 1)
     qpopd
 }
 

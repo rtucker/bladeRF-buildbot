@@ -28,9 +28,10 @@ cat << EOM
             32-bit.  The FX3 firmware images are built using the
             <span title="FX3_SDK_B125.tar.gz, md5sum=a1434b1fc3611f845d1b249722dfc497">
                 Cypress FX3 SDK v1.2.3</span>.
-            All builds are performed on an Ubuntu 10.04 LTS server hosted by
+            All builds are performed on an Ubuntu 14.04 LTS server hosted by
             <a href="http://www.linode.com/?r=f4079e5bd594cdb5820aaec4a8eaca7b533dd6d0">
-                Linode</a>.
+                Linode</a> within a <a href="https://www.docker.io/">Docker</a>
+            container.
         </p>
 
         <p>
@@ -39,6 +40,8 @@ cat << EOM
             <a href="mailto:rtucker@gmail.com">rtucker@gmail.com</a>
             or HoopyCat on
             <a href="irc://chat.freenode.net/bladeRF">freenode #bladeRF</a>.
+            The buildbot repository is available on
+            <a href="https://github.com/rtucker/bladeRF-buildbot/">GitHub</a>.
         </p>
 
         <h2>Latest Image</h2>
@@ -174,6 +177,8 @@ cat << EOM
         <hr>
 <i>autobuild.sh by <a href="mailto:rtucker@gmail.com">rtucker@gmail.com</a></i><br/>
 <pre>
+$(uname -a)
+
 $(uptime)
 
 $(df -h ${WORKDIR})
