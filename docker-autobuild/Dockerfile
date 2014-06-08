@@ -17,6 +17,7 @@ ADD inc/autobuild.sh        /bladerf/autobuild.sh
 ADD inc/autobuild_inc.sh    /bladerf/autobuild_inc.sh
 ADD inc/builder_loop.sh     /bladerf/builder_loop.sh
 ADD inc/clean_builds.sh     /bladerf/clean_builds.sh
+ADD inc/coverity_upload.sh  /bladerf/coverity_upload.sh
 ADD inc/update_html.sh      /bladerf/update_html.sh
 
 WORKDIR /srv/bladerf
