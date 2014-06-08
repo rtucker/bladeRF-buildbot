@@ -180,7 +180,12 @@ then
 fi
 
 # Point a 'latest' symlink into the right place, if we meet the requirements
-consider_latest_symlink ${WORKDIR}/builds/ ${REVID}
+if [ -z "$1" ]
+then
+    consider_latest_symlink ${WORKDIR}/builds/ ${REVID}
+else
+    echo "Forced build -- did not update latest/ symlink"
+fi
 
 echo "autobuild.sh complete"
 echo "Time:         $(date)"
