@@ -128,6 +128,32 @@ then
     fi
 fi
 
+# Run clang static analysis
+if true
+then
+    echo "**********"
+    echo "Running: ${REVID} scan-build for host"
+    echo "**********"
+
+    build_dir="host_clangscan"
+
+    clone_build_dir ${WORKDIR}/bladeRF ${REVBUILDS_DIR} ${build_dir} ${REVID}
+
+    cd ${REVBUILDS_DIR}/${build_dir}
+    prep_build Release ${REVID::7}
+    cd host
+    run_bladerf_clangscan
+
+    if [ -z "$_result" ] || [ ! -d "$_result" ]
+    then
+        echo "Build failed (host_clangscan), oh no!!"
+        echo "_result was ${_result}"
+        touch ${WORKDIR}/builds/${REVID}/artifacts/${build_dir}.FAILED
+    else
+        mv $_result ${REVBUILDS_DIR}/artifacts/${build_dir}
+    fi
+fi
+
 # Build Coverity tarball
 if true
 then

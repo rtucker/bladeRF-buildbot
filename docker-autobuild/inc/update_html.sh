@@ -140,6 +140,19 @@ do
             echo "</tr>"
         fi
 
+        if [ -d "${artipath}/host_clangscan" ]
+        then
+            BUILDFILE=${BUILDDIR}/artifacts/host_clangscan
+            BUILDTIME=$(stat --format="%y" ${BUILDFILE})
+            SIZE=$(du -bs ${BUILDFILE} | cut -f1)
+            echo "<tr>"
+            echo "<td><a href=\"${BASEDIR}/artifacts/host_clangscan/\">host_clangscan/</a></td>"
+            echo "<td>${SIZE}</td>"
+            echo "<td>${BUILDTIME}</td>"
+            echo "<td></td>"
+            echo "</tr>"
+        fi
+
         for file in $(ls ${artipath}/*.rbf ${artipath}/*.img 2>/dev/null)
         do
             # Build info about each artifact file

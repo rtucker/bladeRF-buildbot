@@ -169,6 +169,22 @@ function build_bladerf_doxygen()
     qpopd
 }
 
+# run_bladerf_clangscan: runs clang's scan-build
+function run_bladerf_clangscan() {
+    mkdir clang_scan
+    qpushd clang_scan
+        cmake -DCMAKE_C_COMPILER=/usr/share/clang/scan-build/ccc-analyzer \
+              ../
+        /usr/share/clang/scan-build/scan-build -analyze-headers -o ./report make
+        if [ -d "./report" ]
+        then
+            _result="clang_scan/report"
+        else
+            _result=""
+        fi
+    qpopd
+}
+
 # build_bladerf_coverity: builds a coverity tarball
 function build_coverity_tarball()
 {

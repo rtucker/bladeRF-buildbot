@@ -12,6 +12,7 @@ RUN apt-get update
 RUN apt-get install -y build-essential libstdc++6:i386
 RUN apt-get build-dep -y bladerf
 RUN apt-get install -y git
+RUN apt-get install -y clang
 
 ADD inc/autobuild.sh        /bladerf/autobuild.sh
 ADD inc/autobuild_inc.sh    /bladerf/autobuild_inc.sh
