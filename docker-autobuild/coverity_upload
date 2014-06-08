@@ -2,9 +2,9 @@
 LATEST_SYMLINK=/srv/bladerf/builds/latest
 LAST_UPLOAD_FILE=/srv/bladerf/.coverity_last_upload
 MINIMUM_AGE=$(((7*24*60*60)))
+TOKENDIR=/srv/bladerf
 
 LATEST_TARGET=$(stat --format="%N" ${LATEST_SYMLINK} | cut -d'`' -f3 | cut -d"'" -f1)
-TOKENDIR=$(dirname $0)
 TOKEN=$(cat ${TOKENDIR}/.coverity_token)
 EMAIL=rtucker@gmail.com
 DROPFILE=${LATEST_SYMLINK}/coverity/build/bladeRF_coverity.tgz
