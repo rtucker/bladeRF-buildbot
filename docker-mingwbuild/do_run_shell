@@ -1,0 +1,2 @@
+#!/bin/sh
+sudo docker.io run -t -i -v /opt:/opt:ro -v /srv/bladerf:/srv/bladerf:rw --rm bladerf-mingwbuild bash
