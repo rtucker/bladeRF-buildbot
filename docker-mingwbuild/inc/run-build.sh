@@ -101,16 +101,39 @@ function package_build() {
     cp /usr/share/doc/mingw-w64-i686-dev/copyright ${DIR}/COPYING.mingw-w64-i686-dev
     cp /usr/share/doc/gcc-mingw-w64-i686/copyright ${DIR}/COPYING.gcc-mingw-w64-i686
 cat > ${DIR}/README <<EOF
-    This is an automated Windows build of the bladeRF host components,
-    including libbladeRF and the bladeRF-cli utility.
+This is an automated Windows build of the bladeRF host components,
+including libbladeRF and the bladeRF-cli utility.  It was built using
+Mingw64 inside of a Docker container on a Linux system.
 
-    Questions/comments may be directed to:
-        Ryan Tucker
-        bladerf@ryantucker.us
-        IRC: HoopyCat (#bladerf on irc.freenode.net)
+There should be a SIGNED.md file in this directory containing a valid
+Keybase signature by rtucker.  If not, regard it with suspicion.
 
-    The build script is part of the bladeRF-buildbot project:
-        https://github.com/rtucker/bladeRF-buildbot
+For DLL copyright information, see:
+libbladeRF.dll          COPYING.bladeRF
+libgcc_s_sjlj-1.dll     COPYING.gcc-mingw-w64-i686
+libusb-1.0.dll          COPYING.libusbx
+libwinpthread-1.dll     COPYING.mingw-w64-i686-dev
+pthreadVC2.dll          COPYING.pthreads-win32        
+
+Build system information:
+Date:    $(date -u)
+Host:    $(hostname -f)
+Distro:  $(lsb_release -ds)
+Kernel:  $(cat /proc/version)
+Uptime:  $(uptime)
+
+Toolchain versions:
+$(dpkg-query --show gcc-mingw-w64-i686 g++-mingw-w64-i686 mingw-w64-tools cmake git)
+
+Questions/comments may be directed to:
+Ryan Tucker <bladerf@ryantucker.us>
+IRC: HoopyCat (#bladerf on irc.freenode.net)
+
+The build script is part of the bladeRF-buildbot project:
+https://github.com/rtucker/bladeRF-buildbot
+
+Powered by Linode high performance SSD servers:
+https://www.linode.com/?r=f4079e5bd594cdb5820aaec4a8eaca7b533dd6d0
 EOF
     zip -r ${DIR}.zip ${DIR}
     cp ${DIR}.zip /srv/bladerf/
