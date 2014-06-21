@@ -1,5 +1,28 @@
 #!/bin/bash
 
+function get_build_id() {
+    if [ -z "$1" ]; then
+        echo "get_commit_id: missing directory"
+        exit 1
+    fi
+
+    if [ -z "$2" ]; then
+        _rev=HEAD
+    else
+        _rev=$2
+    fi
+
+    pushd $1
+        _revinfo=$(git rev-list ${_rev} -n 1 --timestamp)
+        _datestamp=$(cut -d' ' -f1 <<< "$_revinfo")
+        _datestr=$(date --date=@${_datestamp} +%Y%m%d%H%M%S)
+        _hash=$(cut -d' ' -f2 <<< "$_revinfo")
+        _hashstr=${_hash::7}
+
+        _result=${_datestr}-git${_hashstr}
+    popd
+}
+
 function clone_repo() {
     git clone /srv/bladerf/bladeRF/
     mkdir -p bladeRF/host/build/
@@ -12,7 +35,7 @@ function build_libusbx() {
     echo "******************************************************"
     pushd /tmp/libusbx-1.0.18
     ./configure --host=i686-w64-mingw32 --prefix=/usr/i686-w64-mingw32
-    make
+    make -j3
     make install
     popd
 
@@ -54,7 +77,43 @@ function build_bladerf() {
         -DLIBPTHREADSWIN32_PATH=${LIBPTHREADSWIN32_PATH} \
     ..
 
-    make
+    make -j3
+    popd
+}
+
+function package_build() {
+    get_build_id /bladerf/bladeRF
+    DIR=bladeRF-i686-w64-mingw32-${_result}
+    pushd /bladerf/bladeRF/host/build
+    mkdir ${DIR}
+    cp output/* ${DIR}
+    cp /usr/i686-w64-mingw32/lib/libwinpthread-1.dll ${DIR}
+    cp /usr/lib/gcc/i686-w64-mingw32/4.8/libgcc_s_sjlj-1.dll ${DIR}
+    cp ../../CONTRIBUTORS ${DIR}/CONTRIBUTORS.bladeRF
+    cp ../../COPYING ${DIR}/COPYING.bladeRF
+    cp ../../README.md ${DIR}/README.bladeRF
+    cp /pthreads/Pre-built.2/CONTRIBUTORS ${DIR}/CONTRIBUTORS.pthreads-win32
+    cp /pthreads/Pre-built.2/COPYING ${DIR}/COPYING.pthreads-win32
+    cp /pthreads/Pre-built.2/README ${DIR}/README.pthreads-win32
+    cp /tmp/libusbx-1.0.18/AUTHORS ${DIR}/CONTRIBUTORS.libusbx
+    cp /tmp/libusbx-1.0.18/COPYING ${DIR}/COPYING.libusbx
+    cp /tmp/libusbx-1.0.18/README ${DIR}/README.libusbx
+    cp /usr/share/doc/mingw-w64-i686-dev/copyright ${DIR}/COPYING.mingw-w64-i686-dev
+    cp /usr/share/doc/gcc-mingw-w64-i686/copyright ${DIR}/COPYING.gcc-mingw-w64-i686
+cat > ${DIR}/README <<EOF
+    This is an automated Windows build of the bladeRF host components,
+    including libbladeRF and the bladeRF-cli utility.
+
+    Questions/comments may be directed to:
+        Ryan Tucker
+        bladerf@ryantucker.us
+        IRC: HoopyCat (#bladerf on irc.freenode.net)
+
+    The build script is part of the bladeRF-buildbot project:
+        https://github.com/rtucker/bladeRF-buildbot
+EOF
+    zip -r ${DIR}.zip ${DIR}
+    cp ${DIR}.zip /srv/bladerf/
     popd
 }
 
@@ -62,4 +121,5 @@ function build_bladerf() {
 clone_repo
 build_libusbx
 build_bladerf
+package_build
 

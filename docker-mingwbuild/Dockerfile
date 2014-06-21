@@ -11,7 +11,7 @@ MAINTAINER Ryan Tucker <rtucker@gmail.com>
 RUN apt-get update
 RUN apt-get install -y build-essential
 RUN apt-get install -y gcc-mingw-w64-i686 g++-mingw-w64-i686 mingw-w64-tools
-RUN apt-get install -y git wget unzip cmake
+RUN apt-get install -y git wget unzip zip cmake
 
 # Essential configuration for cmake cross-compiling
 ADD inc/i686-w64-mingw32.toolchain /bladerf/i686-w64-mingw32.toolchain
