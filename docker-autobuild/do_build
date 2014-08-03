@@ -1,2 +1,10 @@
 #!/bin/sh
-sudo docker.io build -t bladerf-autobuild .
+
+if [ "$1" = "nocache" ]
+then
+    args="--no-cache=true"
+else
+    args="--no-cache=false"
+fi
+
+sudo docker.io build -t bladerf-autobuild $args .

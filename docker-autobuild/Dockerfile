@@ -1,6 +1,6 @@
 # bladeRF autobuild bot
 
-# VERSION 0.0.1
+# VERSION 0.0.2
 
 # Relies on: docker-buildtools/Dockerfile
 
@@ -9,6 +9,7 @@ MAINTAINER Ryan Tucker <rtucker@gmail.com>
 
 RUN dpkg --add-architecture i386
 RUN apt-get update
+RUN apt-get dist-upgrade -y
 RUN apt-get install -y build-essential libstdc++6:i386
 RUN apt-get build-dep -y bladerf
 RUN apt-get install -y git

@@ -1,2 +1,11 @@
 #!/bin/sh
-sudo docker.io run --detach -v /opt:/opt:ro -v /srv/bladerf:/srv/bladerf:rw --name BLADERF-AUTOBUILDER bladerf-autobuild
+
+NAME=BLADERF-AUTOBUILDER
+
+if [ "$1" = "killit" ]
+then
+    sudo docker.io kill $NAME
+    sudo docker.io rm $NAME
+fi
+
+sudo docker.io run --detach -v /opt:/opt:ro -v /srv/bladerf:/srv/bladerf:rw --name $NAME bladerf-autobuild

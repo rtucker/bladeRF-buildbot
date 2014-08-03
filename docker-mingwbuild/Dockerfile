@@ -1,11 +1,12 @@
 # bladeRF autobuild bot, Windows edition
 
-# VERSION 0.0.1
+# VERSION 0.0.2
 
 FROM ubuntu
 MAINTAINER Ryan Tucker <rtucker@gmail.com>
 
 RUN apt-get update
+RUN apt-get dist-upgrade -y
 RUN apt-get install -y build-essential
 RUN apt-get install -y gcc-mingw-w64-i686 g++-mingw-w64-i686 mingw-w64-tools
 RUN apt-get install -y git wget unzip zip cmake
