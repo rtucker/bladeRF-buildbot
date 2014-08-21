@@ -26,7 +26,7 @@ WORKDIR /srv/bladerf
 
 ENV BINDIR          /bladerf
 ENV WORKDIR         /srv/bladerf
-ENV QUARTUS_PATH    /opt/altera/13.1.1
+ENV QUARTUS_PATH    /opt/altera/14.0
 ENV COVERITY_PATH   /opt/coverity/cov-analysis-linux64-7.0.2/bin
 ENV TZ              Etc/UTC
 ENV REVISION        HEAD
