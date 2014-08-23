@@ -4,7 +4,7 @@ LAST_UPLOAD_FILE=/srv/bladerf/.coverity_last_upload
 MINIMUM_AGE=$(((7*24*60*60)))
 TOKENDIR=/srv/bladerf
 
-LATEST_TARGET=$(stat --format="%N" ${LATEST_SYMLINK} | cut -d'`' -f3 | cut -d"'" -f1)
+LATEST_TARGET=$(readlink ${LATEST_SYMLINK})
 TOKEN=$(cat ${TOKENDIR}/.coverity_token)
 EMAIL=rtucker@gmail.com
 DROPFILE=${LATEST_SYMLINK}/coverity/build/bladeRF_coverity.tgz
@@ -12,7 +12,7 @@ VERSION=$(grep Version ${LATEST_SYMLINK}/coverity/build/host/libraries/libbladeR
 
 if [ -f "${LAST_UPLOAD_FILE}" ]; then
     LAST_UPLOADED=$(cat ${LAST_UPLOAD_FILE})
-    LAST_UPLOADED_AT=$(stat --format=%Z ${LAST_UPLOAD_FILE})
+    LAST_UPLOADED_AT=$(stat --format=%Y ${LAST_UPLOAD_FILE})
     echo "Last revision uploaded: ${LAST_UPLOADED}"
 else
     LAST_UPLOADED=""
