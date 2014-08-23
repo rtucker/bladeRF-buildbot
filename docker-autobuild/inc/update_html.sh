@@ -24,7 +24,7 @@ cat << EOM
         </p>
 
         <p>
-            The FPGA images are built using Quartus II Web Edition 13.1,
+            The FPGA images are built using Quartus II Web Edition 13.1.1,
             32-bit.  The FX3 firmware images are built using the
             <span title="FX3_SDK_B125.tar.gz, md5sum=a1434b1fc3611f845d1b249722dfc497">
                 Cypress FX3 SDK v1.2.3</span>.
