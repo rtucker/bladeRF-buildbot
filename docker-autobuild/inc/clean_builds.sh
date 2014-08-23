@@ -8,7 +8,7 @@ set -e
 # Nuke all but the latest build dirs after a few hours
 LATESTTARGET=$(stat --format="%N" ${WORKDIR}/builds/latest | cut -d'`' -f3 | cut -d"'" -f1)
 
-for dir in $(find ${WORKDIR}/builds/ -maxdepth 2 -mindepth 2 -type d -cmin +120)
+for dir in $(find ${WORKDIR}/builds/ -maxdepth 2 -mindepth 2 -type d -ctime +2)
 do
     CANDIDATEBUILD=$(basename `dirname $dir`)
     if [ "$CANDIDATEBUILD" != "$LATESTTARGET" ] && [ "$(basename $dir)" != "artifacts" ]
