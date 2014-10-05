@@ -17,7 +17,8 @@ function update_master_repo() {
 
     if [ -d "$1" ]; then
         qpushd $1
-            git pull
+            git fetch --all
+            git checkout origin/master
         qpopd
     else
         git clone https://github.com/Nuand/bladeRF.git $1
