@@ -1,6 +1,6 @@
 # bladeRF autobuild bot
 
-# VERSION 0.0.2
+# VERSION 0.0.3
 
 # Relies on: docker-buildtools/Dockerfile
 
@@ -29,5 +29,8 @@ ENV QUARTUS_PATH    /opt/altera/13.1.1
 ENV COVERITY_PATH   /opt/coverity/cov-analysis-linux64-7.0.2/bin
 ENV TZ              Etc/UTC
 ENV REVISION        HEAD
+
+RUN git config --global user.email "bladeRF-buildbot@ryantucker.us"
+RUN git config --global user.name "bladeRF buildbot"
 
 CMD ["bash", "/bladerf/builder_loop.sh"]
