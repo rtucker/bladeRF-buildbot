@@ -48,7 +48,7 @@ free -m
 echo ""
 
 # Iterate through all possibilities and build FPGAs
-for revision in hosted #qpsk_tx fsk_bridge headless
+for revision in hosted atsc_tx #qpsk_tx fsk_bridge headless
 do
     for size in 40 115
     do
