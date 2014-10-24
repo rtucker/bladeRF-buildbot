@@ -1,10 +1,10 @@
 # bladeRF autobuild bot
 
-# VERSION 0.0.3
+# VERSION 0.0.4
 
 # Relies on: docker-buildtools/Dockerfile
 
-FROM ubuntu
+FROM ubuntu:trusty
 MAINTAINER Ryan Tucker <rtucker@gmail.com>
 
 RUN dpkg --add-architecture i386
