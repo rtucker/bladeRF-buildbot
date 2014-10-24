@@ -129,12 +129,7 @@ function build_bladerf_fpga() {
 
     ${QUARTUS_PATH}/nios2eds/nios2_command_shell.sh ./build_bladerf.sh -r $revision -s $size
 
-    if [ -f "${revision}x${size}.rbf" ]
-    then
-        _result=${revision}x${size}.rbf
-    else
-        _result=""
-    fi
+    _result=$(ls ${revision}x${size}*/${revision}x${size}.rbf | head -1)
 }
 
 # build_bladerf_firmware: builds firmware for the fx3
