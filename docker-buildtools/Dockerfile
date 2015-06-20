@@ -5,7 +5,7 @@
 # USE LIKE:    docker run -t -i --rm --volumes-from BLADERF-BUILDTOOLS ubuntu bash
 
 FROM busybox
-MAINTAINER Ryan Tucker <rtucker@gmail.com>
+MAINTAINER Ryan Tucker <docker@ryantucker.us>
 
 VOLUME ["/opt/altera", "/opt/cypress", "/opt/coverity"]
 

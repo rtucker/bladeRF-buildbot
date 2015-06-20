@@ -3,7 +3,7 @@
 # VERSION 0.0.3
 
 FROM ubuntu:trusty
-MAINTAINER Ryan Tucker <rtucker@gmail.com>
+MAINTAINER Ryan Tucker <docker@ryantucker.us>
 
 RUN apt-get update
 RUN apt-get dist-upgrade -y

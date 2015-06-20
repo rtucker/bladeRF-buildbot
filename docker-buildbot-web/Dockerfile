@@ -3,7 +3,7 @@
 # VERSION 0.0.3
 
 FROM ubuntu:trusty
-MAINTAINER Ryan Tucker <rtucker@gmail.com>
+MAINTAINER Ryan Tucker <docker@ryantucker.us>
 
 RUN dpkg --add-architecture i386
 RUN apt-get update
