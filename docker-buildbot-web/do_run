@@ -4,8 +4,8 @@ NAME=BLADERF-WEB
 
 if [ "$1" = "killit" ]
 then
-    sudo docker.io kill $NAME
-    sudo docker.io rm $NAME
+    sudo docker kill $NAME
+    sudo docker rm $NAME
 fi
 
-sudo docker.io run --detach -v /srv/bladerf:/srv/bladerf:ro --name $NAME bladerf-buildbot-web
+sudo docker run --detach -v /srv/bladerf:/srv/bladerf:ro --name $NAME bladerf-buildbot-web

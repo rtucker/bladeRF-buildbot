@@ -7,4 +7,4 @@ else
     args="--no-cache=false"
 fi
 
-sudo docker.io build -t bladerf-mingwbuild $args .
+sudo docker build -t bladerf-mingwbuild $args .
