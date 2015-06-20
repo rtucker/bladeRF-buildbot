@@ -10,9 +10,8 @@ MAINTAINER Ryan Tucker <docker@ryantucker.us>
 RUN dpkg --add-architecture i386
 RUN apt-get update
 RUN apt-get dist-upgrade -y
-RUN apt-get install -y build-essential libstdc++6:i386
+RUN apt-get install -y build-essential libstdc++6:i386 language-pack-en git clang curl
 RUN apt-get build-dep -y bladerf
-RUN apt-get install -y git clang curl
 
 ADD inc/autobuild.sh        /bladerf/autobuild.sh
 ADD inc/autobuild_inc.sh    /bladerf/autobuild_inc.sh

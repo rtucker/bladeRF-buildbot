@@ -5,7 +5,6 @@
 FROM ubuntu:trusty
 MAINTAINER Ryan Tucker <docker@ryantucker.us>
 
-RUN dpkg --add-architecture i386
 RUN apt-get update
 RUN apt-get dist-upgrade -y
 
