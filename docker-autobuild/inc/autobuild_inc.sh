@@ -171,7 +171,7 @@ function run_bladerf_clangscan() {
     qpushd clang_scan
         cmake -DCMAKE_C_COMPILER=/usr/share/clang/scan-build/ccc-analyzer \
               ../
-        /usr/share/clang/scan-build/scan-build -analyze-headers -maxloop 100 -stats -o ./report make
+        /usr/share/clang/scan-build/scan-build -analyze-headers -maxloop 100 -o ./report make
         if [ -d "./report" ]
         then
             _result="clang_scan/report"
