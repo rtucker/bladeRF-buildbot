@@ -1,7 +1,7 @@
 #!/bin/bash
 LATEST_SYMLINK=/srv/bladerf/builds/latest
 LAST_UPLOAD_FILE=/srv/bladerf/.coverity_last_upload
-MINIMUM_AGE=$(((1*24*60*60)))
+MINIMUM_AGE=$(((6*60*60)))
 TOKENDIR=/srv/bladerf
 
 LATEST_TARGET=$(readlink ${LATEST_SYMLINK})
