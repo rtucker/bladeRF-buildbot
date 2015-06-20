@@ -58,6 +58,6 @@ curl --form project=bladeRF \
      --form file=@${DROPFILE} \
      --form version=${VERSION} \
      --form description="Rev ${LATEST_TARGET:0:7} - bladeRF Build-o-Matic Auto Submission" \
-     http://scan5.coverity.com/cgi-bin/upload.py || exit 1
+     https://scan.coverity.com/builds\?project=bladeRF || exit 1
 
 echo "${LATEST_TARGET}" > ${LAST_UPLOAD_FILE}
