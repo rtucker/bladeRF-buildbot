@@ -24,8 +24,8 @@ cat << EOM
         </p>
 
         <p>
-            The FPGA images are built using Quartus II Web Edition 15.0,
-            32-bit.  The FX3 firmware images are built using the
+            FPGA images are built using Quartus II Web Edition 15.0.1, 64-bit.
+            FX3 firmware images are built using the
             <span title="FX3_SDK_B125.tar.gz, md5sum=a1434b1fc3611f845d1b249722dfc497">
                 Cypress FX3 SDK v1.2.3</span>.
             All builds are performed on an Ubuntu 14.04 LTS server hosted by
@@ -37,7 +37,7 @@ cat << EOM
         <p>
             If there is a problem with this script, please contact the
             build-o-matician at
-            <a href="mailto:rtucker@gmail.com">rtucker@gmail.com</a>
+            <a href="mailto:bladerf@ryantucker.us">bladerf@ryantucker.us</a>
             or HoopyCat on
             <a href="irc://chat.freenode.net/bladeRF">freenode #bladeRF</a>.
             The buildbot repository is available on
@@ -188,7 +188,7 @@ cat << EOM
         </table>
 
         <hr>
-<i>autobuild.sh by <a href="mailto:rtucker@gmail.com">rtucker@gmail.com</a></i><br/>
+<i>autobuild.sh by <a href="mailto:bladerf@ryantucker.us">bladerf@ryantucker.us</a></i><br/>
 <pre>
 $(uname -a)
 
