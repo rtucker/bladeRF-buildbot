@@ -2,7 +2,7 @@
 
 # Set important global variables
 WORKDIR="/srv/bladerf"
-QUARTUS_PATH="/opt/altera/13.1.1"
+QUARTUS_PATH="/opt/altera/15.0"
 COVERITY_PATH="/opt/coverity/cov-analysis-linux64-7.0.2/bin"
 TZ=Etc/UTC
 REVISION="HEAD"
