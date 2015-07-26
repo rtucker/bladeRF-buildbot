@@ -1,12 +1,13 @@
 # bladeRF autobuild bot, Windows edition
 
-# VERSION 0.0.3
+# VERSION 0.0.4
 
-FROM ubuntu:trusty
+FROM ubuntu
 MAINTAINER Ryan Tucker <docker@ryantucker.us>
-
+RUN sed -i -e "s|archive.ubuntu.com|mirrors.linode.com|g" /etc/apt/sources.list
 RUN apt-get update
 RUN apt-get dist-upgrade -y
+
 RUN apt-get install -y build-essential gcc-mingw-w64-i686 g++-mingw-w64-i686 mingw-w64-tools git wget unzip zip cmake
 
 # External files:

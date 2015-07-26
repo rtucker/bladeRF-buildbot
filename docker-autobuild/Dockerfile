@@ -1,15 +1,15 @@
 # bladeRF autobuild bot
 
-# VERSION 0.0.4
+# VERSION 0.0.5
 
-# Relies on: docker-buildtools/Dockerfile
-
-FROM ubuntu:trusty
+FROM ubuntu
 MAINTAINER Ryan Tucker <docker@ryantucker.us>
+RUN sed -i -e "s|archive.ubuntu.com|mirrors.linode.com|g" /etc/apt/sources.list
+RUN apt-get update
+RUN apt-get dist-upgrade -y
 
 RUN dpkg --add-architecture i386
 RUN apt-get update
-RUN apt-get dist-upgrade -y
 RUN apt-get install -y build-essential libstdc++6:i386 language-pack-en git clang curl
 RUN apt-get build-dep -y bladerf
 

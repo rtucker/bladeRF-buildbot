@@ -1,18 +1,14 @@
-# bladeRF buildbot web site
+# VERSION 0.0.4
 
-# VERSION 0.0.3
-
-FROM ubuntu:trusty
+FROM ubuntu
 MAINTAINER Ryan Tucker <docker@ryantucker.us>
-
+RUN sed -i -e "s|archive.ubuntu.com|mirrors.linode.com|g" /etc/apt/sources.list
 RUN apt-get update
 RUN apt-get dist-upgrade -y
 
 RUN apt-get install -y nginx
 
 VOLUME ["/var/log/nginx"]
-
-RUN rm -v /etc/nginx/nginx.conf
 
 ADD nginx.conf /etc/nginx/
 
