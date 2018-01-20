@@ -1,9 +1,9 @@
 # bladeRF autobuild bot, Windows edition
 
-# VERSION 0.0.4
+# VERSION 0.0.5
 
 FROM ubuntu
-MAINTAINER Ryan Tucker <docker@ryantucker.us>
+MAINTAINER Rey Tucker <docker@reytucker.us>
 RUN sed -i -e "s|archive.ubuntu.com|mirrors.linode.com|g" /etc/apt/sources.list
 RUN apt-get update
 RUN apt-get dist-upgrade -y

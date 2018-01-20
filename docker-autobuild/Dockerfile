@@ -1,9 +1,9 @@
 # bladeRF autobuild bot
 
-# VERSION 0.0.5
+# VERSION 0.0.6
 
 FROM ubuntu
-MAINTAINER Ryan Tucker <docker@ryantucker.us>
+MAINTAINER Rey Tucker <docker@reytucker.us>
 RUN sed -i -e "s|archive.ubuntu.com|mirrors.linode.com|g" /etc/apt/sources.list
 RUN apt-get update
 RUN apt-get dist-upgrade -y
@@ -29,7 +29,7 @@ ENV COVERITY_PATH   /opt/coverity/cov-analysis-linux64-7.6.0/bin
 ENV TZ              Etc/UTC
 ENV REVISION        HEAD
 
-RUN git config --global user.email "bladeRF-buildbot@ryantucker.us"
+RUN git config --global user.email "bladeRF-buildbot@reytucker.us"
 RUN git config --global user.name "bladeRF buildbot"
 
 CMD ["bash", "/bladerf/builder_loop.sh"]
