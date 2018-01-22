@@ -4,8 +4,8 @@ NAME=BLADERF-AUTOBUILDER
 
 if [ "$1" = "killit" ]
 then
-    sudo docker kill $NAME
-    sudo docker rm $NAME
+    docker kill $NAME
+    docker rm $NAME
 fi
 
 docker run --detach -v /opt:/opt:ro -v /srv/bladerf:/srv/bladerf:rw --name $NAME bladerf-autobuild
