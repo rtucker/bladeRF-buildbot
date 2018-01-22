@@ -155,7 +155,7 @@ then
 fi
 
 # Build Coverity tarball
-if true
+if [ -n "${COVERITY_PATH}" ]
 then
     echo "**********"
     echo "Building: ${REVID} coverity"
