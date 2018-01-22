@@ -8,4 +8,4 @@ then
     sudo docker rm $NAME
 fi
 
-sudo docker run --detach -v /opt:/opt:ro -v /srv/bladerf:/srv/bladerf:rw --name $NAME bladerf-autobuild
+docker run --detach -v /opt:/opt:ro -v /srv/bladerf:/srv/bladerf:rw --name $NAME bladerf-autobuild
