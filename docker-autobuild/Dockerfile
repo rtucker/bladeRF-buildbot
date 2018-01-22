@@ -1,6 +1,6 @@
 # bladeRF autobuild bot
 
-# VERSION 0.0.6
+# VERSION 0.0.7
 
 FROM ubuntu
 MAINTAINER Rey Tucker <docker@reytucker.us>
@@ -24,8 +24,8 @@ WORKDIR /srv/bladerf
 
 ENV BINDIR          /bladerf
 ENV WORKDIR         /srv/bladerf
-ENV QUARTUS_PATH    /opt/altera/15.0
-ENV COVERITY_PATH   /opt/coverity/cov-analysis-linux64-7.6.0/bin
+ENV QUARTUS_PATH    /opt/altera/17.0
+#ENV COVERITY_PATH   /opt/coverity/cov-analysis-linux64-7.6.0/bin
 ENV TZ              Etc/UTC
 ENV REVISION        HEAD
 
