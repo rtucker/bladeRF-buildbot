@@ -90,8 +90,9 @@ RUN groupadd -r bladerf \
     && chown -R bladerf.bladerf /home/bladerf
 
 # Storage setup
-VOLUME ["/data"]
-RUN mkdir -p ${WORKDIR} && chown -R bladerf.bladerf ${WORKDIR}
+RUN mkdir -p ${WORKDIR}
+RUN chown -R bladerf.bladerf ${WORKDIR}
+VOLUME /data
 
 # Become user
 USER bladerf

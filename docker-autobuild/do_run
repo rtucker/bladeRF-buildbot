@@ -8,4 +8,7 @@ then
     docker rm $NAME
 fi
 
-docker run --detach --volume /srv/bladerf:/data:rw --name $NAME bladerf-autobuild
+docker run --detach \
+    --name $NAME \
+    --mount source=bladerf-builds,target=/data \
+    bladerf-autobuild

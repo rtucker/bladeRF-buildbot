@@ -4,4 +4,8 @@ if [ -z "$1" ]; then
     exit 1
 fi
 
-docker run --detach --volume /srv/bladerf:/srv/bladerf:rw bladerf-autobuild /bladerf/autobuild.sh $1
+docker run --detach \
+    --name $NAME \
+    --mount source=bladerf-builds,target=/data \
+    bladerf-autobuild \
+    /bladerf/autobuild.sh $1
