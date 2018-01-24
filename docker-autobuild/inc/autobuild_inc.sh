@@ -82,20 +82,7 @@ function prep_build() {
         shift
     fi
 
-    # Hack CMakeLists as required
-    #for dir in host fx3_firmware host/libraries/libbladeRF
-    #do
-    #    qpushd $dir
-    #        _CMAKE_CLD=`pwd`           # remember where we are...
-    #        sed --in-place=.bak --expression="s:\${CMAKE_CURRENT_LIST_DIR}:${_CMAKE_CLD}:g" \
-    #                            --expression="s:cmake_minimum_required(VERSION 2.8.3):cmake_minimum_required(VERSION 2.8):g" \
-    #                            --expression="s:include(GNUInstallDirs):\#include(GNUInstallDirs):g" \
-    #                            --expression="s:cmake_minimum_required(VERSION 2.8.5):cmake_minimum_required(VERSION 2.8):g" \
-    #                            CMakeLists.txt
-    #    qpopd
-    #done
-
-    # We're running the Lunix here
+    # We're running under Linux
     qpushd fx3_firmware
         # XXX: is the sed still necessary?
         sed 's/HOST_IS_WINDOWS := y/HOST_IS_WINDOWS := n/' make/toolchain.mk.sample > make/toolchain.mk
