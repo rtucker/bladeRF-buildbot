@@ -20,7 +20,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-ARG QUARTUS_BASEIMAGE=rtucker/quartus-lite
+ARG QUARTUS_BASEIMAGE=quartus-lite
 ARG QUARTUS_VERSION=17.0
 
 FROM ${QUARTUS_BASEIMAGE}:${QUARTUS_VERSION}
@@ -40,14 +40,15 @@ ARG DEFAULT_REVISION=HEAD
 # Set up environment variables
 ENV TZ=UTC
 ENV BINDIR=/bladerf
-ENV WORKDIR=/home/bladerf
-ENV PUBLICDIR=/srv/bladerf/builds
+ENV WORKDIR=/data/work
 ENV QUARTUS_SHORTVERSION=17.0
 ENV QUARTUS_LONGVERSION=17.0.2.602
-ENV QUARTUS_ARCHIVE=/opt/altera/quartus_${QUARTUS_LONGVERSION}.tar.bz2
-ENV QUARTUS_PATH=/usr/local/altera/${QUARTUS_SHORTVERSION}
+ENV QUARTUS_PATH=/opt/intelFPGA_lite/${QUARTUS_SHORTVERSION}
 ENV REVISION=${DEFAULT_REVISION}
-#ENV COVERITY_PATH=/opt/coverity/cov-analysis-linux64-7.6.0/bin
+ENV COVERITY_PATH=/opt/coverity/cov-analysis-linux64-7.6.0/bin
+
+#ENV BUILD_FIRMWARE=YES
+#ENV BUILD_COVERITY=YES
 
 # Use local mirror
 RUN sed -i -e "s|archive.ubuntu.com|${APT_MIRROR}|g" /etc/apt/sources.list
@@ -88,8 +89,11 @@ RUN groupadd -r bladerf \
     && mkdir -p /home/bladerf \
     && chown -R bladerf.bladerf /home/bladerf
 
-RUN mkdir -p ${PUBLICDIR} && chown -R bladerf.bladerf ${PUBLICDIR}
+# Storage setup
+VOLUME ["/data"]
+RUN mkdir -p ${WORKDIR} && chown -R bladerf.bladerf ${WORKDIR}
 
+# Become user
 USER bladerf
 
 # Git setup
