@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
 
+[ -z "${BINDIR}" ] && echo "BINDIR not specified" && exit 1
+[ -z "${WORKDIR}" ] && echo "WORKDIR not specified" && exit 1
+
 while true
 do
     ${BINDIR}/autobuild.sh
