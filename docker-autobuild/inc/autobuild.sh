@@ -2,7 +2,6 @@
 
 [ -z "${WORKDIR}" ]     && echo "WORKDIR var not set"   && exit 1
 [ -z "${BINDIR}" ]      && echo "BINDIR var not set"    && exit 1
-[ -z "${PUBLICDIR}" ]   && echo "PUBLICDIR var not set" && exit 1
 
 # Read in our library of useful functions
 . ${BINDIR}/autobuild_inc.sh
@@ -74,36 +73,43 @@ do
 done
 
 # Build two firmware images: one with debug, one without
-for debug_image in true false
-do
-    if [ "$debug_image" == "true" ]
-    then
-        image_type="Debug"
-        build_dir="firmware_debug"
-    else
-        image_type="Release"
-        build_dir="firmware"
-    fi
+if [ -n "${BUILD_FIRMWARE}" ]
+then
+    for debug_image in true false
+    do
+        if [ "$debug_image" == "true" ]
+        then
+            image_type="Debug"
+            build_dir="firmware_debug"
+        else
+            image_type="Release"
+            build_dir="firmware"
+        fi
 
+        echo "**********"
+        echo "Building: ${REVID} firmware $image_type"
+        echo "**********"
+
+        clone_build_dir ${WORKDIR}/bladeRF ${REVBUILDS_DIR} ${build_dir} ${REVID}
+
+        cd ${REVBUILDS_DIR}/${build_dir}
+        prep_build ${image_type} ${REVID::7}
+        build_bladerf_firmware ${image_type}
+
+        if [ -z "$_result" ] || [ ! -f "$_result" ]
+        then
+            echo "Build failed ($image_type), oh no!!"
+            echo "_result was ${_result}"
+            touch ${WORKDIR}/builds/${REVID}/artifacts/${build_dir}.FAILED
+        else
+            cp $_result ${WORKDIR}/builds/${REVID}/artifacts/${build_dir}.img
+        fi
+    done
+else
     echo "**********"
-    echo "Building: $REVID $image_type"
+    echo "Skipping: ${REVID} firmware"
     echo "**********"
-
-    clone_build_dir ${WORKDIR}/bladeRF ${REVBUILDS_DIR} ${build_dir} ${REVID}
-
-    cd ${REVBUILDS_DIR}/${build_dir}
-    prep_build ${image_type} ${REVID::7}
-    build_bladerf_firmware ${image_type}
-
-    if [ -z "$_result" ] || [ ! -f "$_result" ]
-    then
-        echo "Build failed ($image_type), oh no!!"
-        echo "_result was ${_result}"
-        touch ${WORKDIR}/builds/${REVID}/artifacts/${build_dir}.FAILED
-    else
-        cp $_result ${WORKDIR}/builds/${REVID}/artifacts/${build_dir}.img
-    fi
-done
+fi
 
 # Build documentation
 if true
@@ -131,7 +137,7 @@ then
 fi
 
 # Run clang static analysis
-if true
+if [ -n "${BUILD_CLANGSCAN}" ]
 then
     echo "**********"
     echo "Running: ${REVID} scan-build for host"
@@ -154,10 +160,14 @@ then
     else
         mv $_result ${REVBUILDS_DIR}/artifacts/${build_dir}
     fi
+else
+    echo "**********"
+    echo "Skipping: ${REVID} scan-build for host"
+    echo "**********"
 fi
 
 # Build Coverity tarball
-if [ -n "${COVERITY_PATH}" ]
+if [ -n "${BUILD_COVERITY}" && -n "${COVERITY_PATH}" ]
 then
     echo "**********"
     echo "Building: ${REVID} coverity"
@@ -179,6 +189,10 @@ then
     else
         cp $_result ${REVBUILDS_DIR}/artifacts/${build_dir}
     fi
+else
+    echo "**********"
+    echo "Skipping: ${REVID} coverity"
+    echo "**********"
 fi
 
 # Point a 'latest' symlink into the right place, if we meet the requirements
@@ -200,3 +214,4 @@ echo "Memory summary:"
 free -m
 echo ""
 echo "EOM"
+
