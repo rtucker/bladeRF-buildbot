@@ -62,19 +62,12 @@ RUN apt-get update && apt-get install -y \
         clang \
         curl \
         git \
-        gtk2-engines-pixbuf:i386 \
         language-pack-en \
-        lib32ncurses5-dev \
         libc6:i386 \
-        libncurses5:i386 \
         libstdc++6:i386 \
         libtcmalloc-minimal4 \
-        libxext6:i386 \
-        libxft2:i386 \
-        libzmq3-dev \
         locales \
         lsb-release \
-        unixodbc-dev \
     && apt-get build-dep -y bladerf \
     && rm -rf /var/lib/apt/lists/*
 
