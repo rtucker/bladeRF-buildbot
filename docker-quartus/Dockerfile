@@ -21,7 +21,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-FROM ubuntu:16.04
+FROM ubuntu:16.04 AS build
 
 LABEL maintainer="Rey Tucker <bladeRF-buildbot@reytucker.us>"
 LABEL version="0.0.1"
@@ -39,17 +39,10 @@ RUN sed -i -e "s|archive.ubuntu.com|${APT_MIRROR}|g" /etc/apt/sources.list
 # Where to install
 ENV QUARTUS_PATH=/opt/intelFPGA_lite/${QUARTUS_VERSION}
 
-# Add i386 architecture
-RUN dpkg --add-architecture i386
-
 # Install things...
 RUN apt-get update && apt-get install -y \
         curl \
         expect \
-        libboost-system-dev \
-        libc6:i386 \
-        libstdc++6:i386 \
-        libtcmalloc-minimal4 \
         locales \
         lsb-release \
     && rm -rf /var/lib/apt/lists/*
@@ -73,4 +66,9 @@ RUN mkdir -p /root/quartus && \
 RUN rm ${QUARTUS_PATH}/quartus/linux64/libboost_system.so \
        ${QUARTUS_PATH}/quartus/linux64/libccl_curl_drl.so \
        ${QUARTUS_PATH}/quartus/linux64/libstdc++.so.6
+
+# Second stage
+FROM ubuntu:16.04
+
+COPY --from=build ${QUARTUS_PATH} ${QUARTUS_PATH}
 

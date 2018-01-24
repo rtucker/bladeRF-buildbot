@@ -1,6 +1,8 @@
 #!/bin/bash
 
-[ -z "$WORKDIR" ] && WORKDIR=/srv/bladerf
+[ -z "${WORKDIR}" ]     && echo "WORKDIR var not set"   && exit 1
+[ -z "${BINDIR}" ]      && echo "BINDIR var not set"    && exit 1
+[ -z "${PUBLICDIR}" ]   && echo "PUBLICDIR var not set" && exit 1
 
 # Read in our library of useful functions
 . ${BINDIR}/autobuild_inc.sh

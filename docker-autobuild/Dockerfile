@@ -20,7 +20,13 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-FROM ubuntu:16.04
+ARG QUARTUS_BASEIMAGE=rtucker/quartus-lite
+ARG QUARTUS_VERSION=17.0
+
+FROM ${QUARTUS_BASEIMAGE}:${QUARTUS_VERSION}
+
+# bring QUARTUS_VERSION forward
+ARG QUARTUS_VERSION=17.0
 
 LABEL maintainer="Rey Tucker <bladeRF-buildbot@reytucker.us>"
 LABEL version="0.0.8"
@@ -34,7 +40,8 @@ ARG DEFAULT_REVISION=HEAD
 # Set up environment variables
 ENV TZ=UTC
 ENV BINDIR=/bladerf
-ENV WORKDIR=/srv/bladerf
+ENV WORKDIR=/home/bladerf
+ENV PUBLICDIR=/srv/bladerf/builds
 ENV QUARTUS_SHORTVERSION=17.0
 ENV QUARTUS_LONGVERSION=17.0.2.602
 ENV QUARTUS_ARCHIVE=/opt/altera/quartus_${QUARTUS_LONGVERSION}.tar.bz2
@@ -75,17 +82,27 @@ RUN echo "en_US.UTF-8 UTF-8" > /etc/locale.gen && \
     locale-gen en_US.UTF-8 && \
     /usr/sbin/update-locale LANG=en_US.UTF-8
 
+# User setup
+RUN groupadd -r bladerf \
+    && useradd --no-log-init -r -g bladerf bladerf \
+    && mkdir -p /home/bladerf \
+    && chown -R bladerf.bladerf /home/bladerf
+
+RUN mkdir -p ${PUBLICDIR} && chown -R bladerf.bladerf ${PUBLICDIR}
+
+USER bladerf
+
 # Git setup
 RUN git config --global user.email "bladeRF-buildbot@reytucker.us"
 RUN git config --global user.name  "bladeRF buildbot"
 
 # Add scripts!
-ADD inc/autobuild.sh        ${BINDIR}/autobuild.sh
-ADD inc/autobuild_inc.sh    ${BINDIR}/autobuild_inc.sh
-ADD inc/builder_loop.sh     ${BINDIR}/builder_loop.sh
-ADD inc/clean_builds.sh     ${BINDIR}/clean_builds.sh
-ADD inc/coverity_upload.sh  ${BINDIR}/coverity_upload.sh
-ADD inc/update_html.sh      ${BINDIR}/update_html.sh
+COPY inc/autobuild.sh        ${BINDIR}/autobuild.sh
+COPY inc/autobuild_inc.sh    ${BINDIR}/autobuild_inc.sh
+COPY inc/builder_loop.sh     ${BINDIR}/builder_loop.sh
+COPY inc/clean_builds.sh     ${BINDIR}/clean_builds.sh
+COPY inc/coverity_upload.sh  ${BINDIR}/coverity_upload.sh
+COPY inc/update_html.sh      ${BINDIR}/update_html.sh
 
 # Do the thing!
 WORKDIR ${WORKDIR}
