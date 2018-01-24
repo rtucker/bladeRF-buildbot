@@ -55,20 +55,18 @@ RUN echo "en_US.UTF-8 UTF-8" > /etc/locale.gen && \
 # Scripts
 COPY inc/setup /root/
 
-# Run the installation
+# Run the installation, clean up bad libs
 RUN mkdir -p /root/quartus && \
     cd /root/quartus && \
     (curl ${QUARTUS_DOWNLOAD} | tar xf -) && \
     /root/setup ${QUARTUS_VERSION} ${QUARTUS_PATH} && \
-    rm -rf /root/quartus
+    rm -rf /root/quartus \
+           ${QUARTUS_PATH}/quartus/linux64/libboost_system.so \
+           ${QUARTUS_PATH}/quartus/linux64/libccl_curl_drl.so \
+           ${QUARTUS_PATH}/quartus/linux64/libstdc++.so.6
 
-# Clean up bad libs
-RUN rm ${QUARTUS_PATH}/quartus/linux64/libboost_system.so \
-       ${QUARTUS_PATH}/quartus/linux64/libccl_curl_drl.so \
-       ${QUARTUS_PATH}/quartus/linux64/libstdc++.so.6
-
-# Second stage
-FROM ubuntu:16.04
-
-COPY --from=build ${QUARTUS_PATH} ${QUARTUS_PATH}
+# A clean second stage, just Quartus
+# This takes a lot of disk space to do, sadly.
+#FROM ubuntu:16.04
+#COPY --from=build ${QUARTUS_PATH} ${QUARTUS_PATH}
 

@@ -1,6 +1,5 @@
 #!/bin/sh
 
-DOCKER_TARGET=rtucker
 IMAGE_NAME=quartus-lite
 IMAGE_TAG=17.0
 QUARTUS_URL=http://download.altera.com/akdlm/software/acdsinst/17.0std.2/602/ib_tar/Quartus-lite-17.0.2.602-linux.tar
@@ -12,7 +11,7 @@ then
     args="--no-cache=true"
 fi
 
-docker build -t ${DOCKER_TARGET}/${IMAGE_NAME}:${IMAGE_TAG} \
+docker build -t ${IMAGE_NAME}:${IMAGE_TAG} \
     --build-arg QUARTUS_VERSION=${IMAGE_TAG} \
     --build-arg QUARTUS_DOWNLOAD=${QUARTUS_URL} \
     $args .
