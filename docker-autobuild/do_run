@@ -8,4 +8,4 @@ then
     docker rm $NAME
 fi
 
-docker run --detach -v /opt:/opt:ro -v /srv/bladerf:/srv/bladerf:rw --name $NAME bladerf-autobuild
+docker run --detach --volume /srv/bladerf:/data:rw --name $NAME bladerf-autobuild
