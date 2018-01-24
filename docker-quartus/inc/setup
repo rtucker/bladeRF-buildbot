@@ -1,0 +1,69 @@
+#!/usr/bin/expect
+
+# Expect script for installing Altera Quartus
+# 
+# Copyright (c) 2017 Christof Harnischmacher
+# 
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+# 
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+# 
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
+
+set timeout -1
+
+set version [lindex $argv 0]
+if {$version == ""} {
+    set version "17.1"
+}
+
+set install_path [lindex $argv 1]
+if {$install_path == ""} {
+    set install_path "/opt/intelFPGA_lite/$version"
+}
+
+spawn /root/quartus/setup.sh
+
+expect "Press \\\[Enter\\\] to continue:" { send "\r" }
+expect "Press \\\[Enter\\\] to continue:" { send "\r" }
+
+puts "----------------------------------"
+
+set count 88;
+while {$count > 0 } {
+    expect "Press \\\[Enter\\\] to continue:" { send "\r" }
+    puts "\n\ncount : $count\n\n";
+    set count [expr $count-1];
+}
+
+expect "Do you accept this license? \\\[y/n\\\]" { send "y\r" }
+expect "Installation directory \\\[/root/intelFPGA_lite/$version\\\]:" { send "$install_path\r" }
+expect "Quartus Prime Lite Edition (Free)  \\\[Y/n\\\] :" { send "y\r" }
+expect "Quartus Prime Lite Edition (Free)  - Quartus Prime Help" { send "n\r" }
+expect "Quartus Prime Lite Edition (Free)  - Devices \\\[Y/n\\\] :" { send "y\r" }
+expect "Quartus Prime Lite Edition (Free)  - Devices - Arria II" { send "y\r" }
+expect "Quartus Prime Lite Edition (Free)  - Devices - Cyclone" { send "y\r" }
+expect "Quartus Prime Lite Edition (Free)  - Devices - Cyclone" { send "y\r" }
+expect "Quartus Prime Lite Edition (Free)  - Devices - Cyclone" { send "y\r" }
+expect "Quartus Prime Lite Edition (Free)  - Devices - MAX II/V" { send "y\r" }
+expect "Quartus Prime Lite Edition (Free)  - Devices - MAX 10 FPGA" { send "y\r" }
+expect "ModelSim - Intel FPGA Starter Edition (Free)" { send "n\r" }
+expect "ModelSim - Intel FPGA Edition" { send "n\r" }
+expect "Is the selection above correct? \\\[Y/n\\\]:" { send "y\r" }
+expect "Create shortcuts on Desktop \\\[Y/n\\\]:" { send "n\r" }
+expect "Launch Quartus Prime Lite Edition \\\[Y/n\\\]:" { send "n\r" }
+expect "Provide your feedback at" { send "n\r" }
+expect eof
+
