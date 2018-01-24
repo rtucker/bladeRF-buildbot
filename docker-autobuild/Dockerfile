@@ -29,14 +29,17 @@ LABEL description="Autobuild bot for bladeRF FPGA images"
 # Set up build arguments
 # Override with: --build-arg APT_MIRROR=whatever
 ARG APT_MIRROR=mirrors.linode.com
+ARG DEFAULT_REVISION=HEAD
 
 # Set up environment variables
+ENV TZ=UTC
 ENV BINDIR=/bladerf
 ENV WORKDIR=/srv/bladerf
-ENV QUARTUS_ARCHIVE=/opt/altera/quartus_17.0.2.602.tar.bz2
-ENV QUARTUS_PATH=/usr/local/altera/17.0
-ENV TZ=UTC
-ENV REVISION=HEAD
+ENV QUARTUS_SHORTVERSION=17.0
+ENV QUARTUS_LONGVERSION=17.0.2.602
+ENV QUARTUS_ARCHIVE=/opt/altera/quartus_${QUARTUS_LONGVERSION}.tar.bz2
+ENV QUARTUS_PATH=/usr/local/altera/${QUARTUS_SHORTVERSION}
+ENV REVISION=${DEFAULT_REVISION}
 #ENV COVERITY_PATH=/opt/coverity/cov-analysis-linux64-7.6.0/bin
 
 # Use local mirror
@@ -45,35 +48,27 @@ RUN sed -i -e "s|archive.ubuntu.com|${APT_MIRROR}|g" /etc/apt/sources.list
 # Add i386 architecture
 RUN dpkg --add-architecture i386
 
-# Latest sauce
-RUN apt-get update
-RUN apt-get dist-upgrade -y
-
-# Install amd64 stuff
-RUN apt-get install -y \
-    build-essential \
-    clang \
-    curl \
-    git \
-    language-pack-en \
-    lib32ncurses5-dev \
-    libtcmalloc-minimal4 \
-    libzmq3-dev \
-    locales \
-    lsb-release \
-    unixodbc-dev
-
-# Install i386 stuff
-RUN apt-get install -y \
-    gtk2-engines-pixbuf:i386 \
-    libc6:i386 \
-    libncurses5:i386 \
-    libstdc++6:i386 \
-    libxext6:i386 \
-    libxft2:i386
-
-# Install remaining build dependencies for bladeRF
-RUN apt-get build-dep -y bladerf
+# Install things...
+RUN apt-get update && apt-get install -y \
+        build-essential \
+        clang \
+        curl \
+        git \
+        gtk2-engines-pixbuf:i386 \
+        language-pack-en \
+        lib32ncurses5-dev \
+        libc6:i386 \
+        libncurses5:i386 \
+        libstdc++6:i386 \
+        libtcmalloc-minimal4 \
+        libxext6:i386 \
+        libxft2:i386 \
+        libzmq3-dev \
+        locales \
+        lsb-release \
+        unixodbc-dev \
+    && apt-get build-dep -y bladerf \
+    && rm -rf /var/lib/apt/lists/*
 
 # Locale setup
 RUN echo "en_US.UTF-8 UTF-8" > /etc/locale.gen && \
