@@ -127,6 +127,10 @@ function build_bladerf_fpga() {
     _revision=$1
     _size=$2
 
+    # Use TCMalloc to avoid crashing during quartus_map
+    # h/t: https://github.com/chriz2600/quartus-lite/
+    export LD_PRELOAD=/usr/lib/libtcmalloc_minimal.so.4
+
     ${QUARTUS_PATH}/nios2eds/nios2_command_shell.sh ./build_bladerf.sh -r $revision -s $size
 
     _result=$(ls ${revision}x${size}*/${revision}x${size}.rbf | head -1)
