@@ -1,6 +1,13 @@
 #!/bin/sh
 
+if [ -z "$1" ]
+then
+    cmd="bash"
+else
+    cmd="$@"
+fi
+
 docker run --interactive --tty \
     --mount source=bladerf-builds,target=/data \
     bladerf-autobuild \
-    bash
+    $cmd

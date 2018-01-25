@@ -68,6 +68,7 @@ RUN apt-get update && apt-get install -y \
         libtcmalloc-minimal4 \
         locales \
         lsb-release \
+        python3-boto3 \
     && apt-get build-dep -y bladerf \
     && rm -rf /var/lib/apt/lists/*
 
@@ -95,14 +96,20 @@ RUN git config --global user.email "bladeRF-buildbot@reytucker.us"
 RUN git config --global user.name  "bladeRF buildbot"
 
 # Add scripts!
-COPY inc/autobuild.sh        ${BINDIR}/autobuild.sh
-COPY inc/autobuild_inc.sh    ${BINDIR}/autobuild_inc.sh
-COPY inc/builder_loop.sh     ${BINDIR}/builder_loop.sh
-COPY inc/clean_builds.sh     ${BINDIR}/clean_builds.sh
-COPY inc/coverity_upload.sh  ${BINDIR}/coverity_upload.sh
-COPY inc/update_html.sh      ${BINDIR}/update_html.sh
+COPY inc/autobuild.sh           ${BINDIR}/autobuild.sh
+COPY inc/autobuild_inc.sh       ${BINDIR}/autobuild_inc.sh
+COPY inc/builder_loop.sh        ${BINDIR}/builder_loop.sh
+COPY inc/clean_builds.sh        ${BINDIR}/clean_builds.sh
+COPY inc/coverity_upload.sh     ${BINDIR}/coverity_upload.sh
+COPY inc/update_html.sh         ${BINDIR}/update_html.sh
+
+COPY inc/aws_config             /home/bladerf/.aws/config
+COPY inc/aws_credentials        /home/bladerf/.aws/credentials
+
+COPY inc/common/queue_mgr.py            ${BINDIR}/queue_mgr.py
+COPY inc/check_build.py                 ${BINDIR}/check_build.py
+COPY inc/enqueue_build_fpga_quartus.py  ${BINDIR}/enqueue_build_fpga_quartus.py
 
 # Do the thing!
 WORKDIR ${WORKDIR}
-CMD ["bash", "/bladerf/builder_loop.sh"]
-
+CMD ["bash", "${BINDIR}/builder_loop.sh"]

@@ -81,7 +81,7 @@ function build_bladerf_fpga() {
     # h/t: https://github.com/chriz2600/quartus-lite/
     export LD_PRELOAD=/usr/lib/libtcmalloc_minimal.so.4
 
-    ${QUARTUS_PATH}/nios2eds/nios2_command_shell.sh ./build_bladerf.sh -r $1 -s $2
+    ${QUARTUS_PATH}/nios2eds/nios2_command_shell.sh ./build_bladerf.sh -r ${_revision} -s ${_size}
 
-    _result=$(ls ${revision}x${size}*/${revision}x${size}.rbf | head -1)
+    _result=$(ls ${_revision}x${_size}*/${_revision}x${_size}.rbf | head -1)
 }

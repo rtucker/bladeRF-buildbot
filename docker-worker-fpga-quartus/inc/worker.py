@@ -22,8 +22,8 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-import boto3
-import json
+import queue_mgr
+
 import logging
 import os
 import subprocess
@@ -33,30 +33,11 @@ import time
 logging.basicConfig(level=logging.INFO)
 logging.getLogger('boto3').setLevel(logging.WARNING)
 
-def get_queue(queuename):
-    logger = logging.getLogger("worker.get_queue")
-
-    sqs = boto3.resource('sqs')
-    queue = sqs.get_queue_by_name(QueueName=queuename)
-
-    logger.debug("Got queue: %s", queue)
-
-    return queue
-
-def execute(body, timeout=None):
+def execute(arglist, timeout=None):
     logger = logging.getLogger("worker.execute")
 
-    data = json.loads(body)
+    cmd = [os.environ['BUILDCOMMAND']] + arglist
 
-    cmd = [
-            os.environ['BUILDCOMMAND'],
-            data['build_id'],
-            data['commit_id'],
-            data['fpga_revision'],
-            data['fpga_size'],
-          ]
-
-    logger.info("Request parsed: %s", data)
     logger.info("Command: %s", cmd)
 
     r = subprocess.run( cmd,
@@ -66,120 +47,97 @@ def execute(body, timeout=None):
 
     return (r.returncode, r.stdout, r.stderr)
 
-def send_message(queue, workertype, contents):
-    logger = logging.getLogger("worker.send_message")
-
-    logger.info("Message: %s", contents)
-
-    response = queue.send_message(
-        MessageBody=json.dumps(contents),
-        MessageAttributes={
-            'WorkerType': {
-                'StringValue': workertype,
-                'DataType': 'String',
-            }
-        }
-    )
-
-    logger.info("Sent: %s (%s)", response.get('MessageId'), workertype)
-
-def node_info():
-    mach = os.uname()
-
-    return  {
-                'machine': mach.machine,
-                'nodename': mach.nodename,
-                'release': mach.release,
-                'sysname': mach.sysname,
-                'version': mach.version,
-            }
-
 def poll(queue):
-    WAIT_TIME_SECONDS=20
-    THROWBACK_TIME=60
+    THROWBACK_TIME=15
     BUILD_TIME=3600
 
     logger = logging.getLogger("worker.poll")
 
-    for message in queue.receive_messages(
-        MessageAttributeNames=['WorkerType'],
-        MaxNumberOfMessages=1,
-        WaitTimeSeconds=WAIT_TIME_SECONDS,
-    ):
-        if message.message_attributes is None:
-            logger.warning("message did not have attributes, deleting: %s",
-                message)
-            message.delete()
-            continue
+    msg = queue_mgr.get_message(queue,
+        worker_types=['ping', 'worker-fpga-quartus'])
 
-        workertype = message.message_attributes['WorkerType']['StringValue']
+    if msg is not None:
+        workertype = msg.message_attributes['WorkerType']['StringValue']
 
-        logger.debug("MessageId=%s, WorkerType=%s, body=%s",
-                     message.message_id, workertype, message.body)
+        logger.info("MessageId=%s, WorkerType=%s", msg.message_id, workertype)
+        logger.debug("MessageId=%s, Body=%s", msg.message_id, msg.body)
 
         start_time = time.time()
         executed = False
 
         if workertype == 'worker-fpga-quartus':
-            logger.info("Executing: %s (%s)", message.message_id, workertype)
+            logger.info("Executing: %s (%s)", msg.message_id, workertype)
 
-            message.change_visibility(VisibilityTimeout=BUILD_TIME)
+            msg.change_visibility(VisibilityTimeout=BUILD_TIME)
 
             try:
-                result = execute(message.body, timeout=BUILD_TIME-60)
+                params = queue_mgr.decode_fpga_task(msg.body)
+            except:
+                logging.exception("Parsing Exception, retrying: %s (%s)",
+                                  msg.message_id, workertype)
+                msg.change_visibility(VisibilityTimeout=THROWBACK_TIME)
+                return True
+
+            try:
+                result = execute(params, timeout=BUILD_TIME-60)
                 end_time = time.time()
                 executed = True
-
             except:
                 logging.exception("Exception: %s (%s)",
-                                  message.message_id, workertype)
+                                  msg.message_id, workertype)
 
         elif workertype == 'ping':
-            logger.info("Executing: %s (%s)", message.message_id, workertype)
+            logger.info("Executing: %s (%s)", msg.message_id, workertype)
 
             end_time = time.time()
+            params = [""]
             result = [0, "", ""]
             executed = True
 
-        elif workertype == 'ping-response':
-            logger.info("Response: %s (%s)", message.message_id, message.body)
-            message.delete()
-            #message.change_visibility(VisibilityTimeout=THROWBACK_TIME)
-
         else:
-            logger.debug("Throwing back: %s (%s)", message.message_id, workertype)
-            message.change_visibility(VisibilityTimeout=THROWBACK_TIME)
+            logger.warning("unhandled workertype: %s (%s)", msg.message_id,
+                workertype)
+            msg.change_visibility(VisibilityTimeout=THROWBACK_TIME)
 
         if executed:
-            logger.info("Completed: %s (%s)", message.message_id, workertype)
+            logger.info("Completed: %s (%s)", msg.message_id, workertype)
 
-            msg = {
-                'host': node_info(),
+            resp = {
+                'host': queue_mgr.node_info(),
                 'request': {
-                    'message_id': message.message_id,
-                    'body': message.body
+                    'build_id': params[0],
+                    'message_id': msg.message_id,
+                    'body': msg.body
                 },
-                'returncode': result[0],
-                'stdout': result[1].decode('utf-8'),
-                'stderr': result[2].decode('utf-8'),
-                'start_time': start_time,
-                'end_time': end_time,
-                'duration': end_time - start_time,
+                'result': {
+                    'returncode': result[0],
+                    'stdout': str(result[1][-4096:]),
+                    'stderr': str(result[2][-4096:]),
+                    'start_time': start_time,
+                    'end_time': end_time,
+                    'duration': end_time - start_time,
+                }
             }
 
             try:
-                send_message(queue, workertype + "-response", msg)
+                queue_mgr.send_message(queue, workertype + "-response", resp)
+                logger.info("Deleting: %s (%s)", msg.message_id, workertype)
+                msg.delete()
+
             except:
                 logger.exception("send_message failed")
+                msg.change_visibility(VisibilityTimeout=THROWBACK_TIME)
 
-            logger.info("Deleting: %s (%s)", message.message_id, workertype)
-            message.delete()
+        return True
+
+    else:
+        return False
 
 def main():
     logger = logging.getLogger("worker")
 
     if len(sys.argv) < 2:
-        sys.stderr.write("Usage: %s <queue_name>" % (sys.argv[0],))
+        sys.stderr.write("Usage: %s <queue_name>\n" % (sys.argv[0],))
         return 1
 
     for key in ['BUILDCOMMAND', 'WORKDIR', 'BINDIR']:
@@ -189,11 +147,14 @@ def main():
 
     queuename = sys.argv[1]
 
-    queue = get_queue(queuename)
+    queue = queue_mgr.get_queue(queuename)
 
     while True:
         logger.debug("Polling...")
-        poll(queue)
+        empty = poll(queue)
+        if empty:
+            logger.debug("Pausing for 60 seconds...")
+            time.sleep(60)
 
 if __name__ == "__main__":
     main()

@@ -92,7 +92,9 @@ COPY inc/autobuild.sh       ${BINDIR}/autobuild.sh
 COPY inc/autobuild_inc.sh   ${BINDIR}/autobuild_inc.sh
 COPY inc/aws_config         /home/bladerf/.aws/config
 COPY inc/aws_credentials    /home/bladerf/.aws/credentials
-COPY inc/worker.py          ${BINDIR}/worker.py
+
+COPY inc/common/queue_mgr.py    ${BINDIR}/queue_mgr.py
+COPY inc/worker.py              ${BINDIR}/worker.py
 
 # Do the thing!
 WORKDIR ${WORKDIR}

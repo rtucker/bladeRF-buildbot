@@ -28,10 +28,12 @@ REVID=$_result
 # Make a build dir, if it doesn't exist...
 mkdir -p ${WORKDIR}/builds/
 REVBUILDS_DIR=${WORKDIR}/builds/${BUILD_ID}/${REVID}
+ARTIFACTS_DIR=${WORKDIR}/builds/${BUILD_ID}/${REVID}/artifacts
 [ -d "${REVBUILDS_DIR}" ] && echo "Already built ${BUILD_ID}/${REVID}" && exit 0
 mkdir -p ${REVBUILDS_DIR}
+mkdir -p ${ARTIFACTS_DIR}
+
 cd ${REVBUILDS_DIR}
-mkdir artifacts
 
 # Redirect stdout and stderr to a named pipe running tee, so that the
 # output from this build session is logged.
@@ -78,9 +80,9 @@ then
     echo "xxxxxxxxxx"
     echo "_result was ${_result}"
 
-    touch ${WORKDIR}/builds/${REVID}/artifacts/${FPGA_REV}x${FPGA_SIZE}.FAILED
+    touch ${ARTIFACTS_DIR}/${FPGA_REV}x${FPGA_SIZE}.FAILED
 else
-    cp $_result ${WORKDIR}/builds/${REVID}/artifacts/
+    cp $_result ${ARTIFACTS_DIR}/
 fi
 
 echo "autobuild.sh complete"
