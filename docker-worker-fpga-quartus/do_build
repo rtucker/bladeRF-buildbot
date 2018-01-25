@@ -1,0 +1,10 @@
+#!/bin/sh
+
+if [ "$1" = "nocache" ]
+then
+    args="--no-cache=true"
+else
+    args="--no-cache=false"
+fi
+
+docker build -t bladerf-worker-fpga-quartus $args .

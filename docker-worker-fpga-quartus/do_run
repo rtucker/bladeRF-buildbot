@@ -1,0 +1,14 @@
+#!/bin/sh
+
+NAME=BLADERF-WORKER-FPGA-QUARTUS
+
+if [ "$1" = "killit" ]
+then
+    docker kill $NAME
+    docker rm $NAME
+fi
+
+docker run --detach \
+    --name $NAME \
+    --mount source=bladerf-builds,target=/data \
+    bladerf-worker-fpga-quartus
