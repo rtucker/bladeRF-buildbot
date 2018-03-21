@@ -33,6 +33,7 @@ RUN sed -i -e "s|archive.ubuntu.com|${APT_MIRROR}|g" /etc/apt/sources.list
 
 # Install things...
 RUN apt-get update \
+ && apt-get upgrade -y \
  && apt-get install -y \
         curl \
         expect \
@@ -47,15 +48,20 @@ RUN apt-get update \
 COPY inc/setup /root/
 
 # Run the installation, clean up bad libs
-ARG QUARTUS_VERSION=17.0
-ARG QUARTUS_DOWNLOAD=http://download.altera.com/akdlm/software/acdsinst/17.0std.2/602/ib_tar/Quartus-lite-17.0.2.602-linux.tar
+ARG QUARTUS_VERSION
+ARG QUARTUS_DOWNLOAD
+ARG QUARTUS_MD5SUM
+
 ENV QUARTUS_PATH=/opt/intelFPGA_lite/${QUARTUS_VERSION}
 
-RUN mkdir -p /root/quartus && \
-    cd /root/quartus && \
-    (curl ${QUARTUS_DOWNLOAD} | tar xf -) && \
-    /root/setup ${QUARTUS_VERSION} ${QUARTUS_PATH} && \
-    rm -rf /root/quartus \
+RUN mkdir -p /tmp/inst /tmp/dl \
+ && curl -o /tmp/dl/quartus.tar "${QUARTUS_DOWNLOAD}" \
+ && echo "${QUARTUS_MD5SUM} /tmp/dl/quartus.tar" | md5sum -c - \
+ && tar -C /tmp/inst -xf /tmp/dl/quartus.tar \
+ && rm -rf /tmp/dl \
+ && cd /tmp/inst \
+ && /root/setup ${QUARTUS_VERSION} ${QUARTUS_PATH} \
+ && rm -rf /tmp/inst \
            ${QUARTUS_PATH}/quartus/linux64/libboost_system.so \
            ${QUARTUS_PATH}/quartus/linux64/libccl_curl_drl.so \
            ${QUARTUS_PATH}/quartus/linux64/libstdc++.so.6 \
