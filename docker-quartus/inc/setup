@@ -46,7 +46,9 @@ expect {
     "Do you accept this license?"                       { send "y\r" ; exp_continue }
     "Installation directory"                            { send "$install_path\r" ; exp_continue }
     "Quartus Prime Lite Edition (Free)  \\\[Y/n\\\] :"  { send "y\r"  ; exp_continue }
-    "Quartus Prime Lite Edition (Free)  - Quartus Prime Help" { send "n\r" ; exp_continue }
+    "Quartus Prime Lite Edition (Free)  - Quartus Prime Help"   { send "n\r" ; exp_continue }
+    "Quartus Prime Lite Edition (Free)  - Devices - Arria"      { send "n\r" ; exp_continue }
+    "Quartus Prime Lite Edition (Free)  - Devices - MAX"        { send "n\r" ; exp_continue }
     "Quartus Prime Lite Edition (Free)  - Devices"      { send "y\r" ; exp_continue }
     "Quartus Prime Lite Edition (Free)  - Quartus Prime Update" { send "y\r" ; exp_continue }
     "ModelSim - "                                       { send "n\r" ; exp_continue }
