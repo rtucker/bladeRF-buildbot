@@ -21,41 +21,36 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-FROM ubuntu:16.04 AS build
+FROM ubuntu:16.04
 
 LABEL maintainer="Rey Tucker <bladeRF-buildbot@reytucker.us>"
 LABEL version="0.0.1"
 LABEL description="Installer for Altera Quartus Prime"
 
-# Set up build arguments
-# Override with: --build-arg APT_MIRROR=whatever
-ARG APT_MIRROR=mirrors.linode.com
-ARG QUARTUS_VERSION=17.0
-ARG QUARTUS_DOWNLOAD=http://download.altera.com/akdlm/software/acdsinst/17.0std.2/602/ib_tar/Quartus-lite-17.0.2.602-linux.tar
-
 # Use local apt mirror
+ARG APT_MIRROR=mirrors.linode.com
 RUN sed -i -e "s|archive.ubuntu.com|${APT_MIRROR}|g" /etc/apt/sources.list
 
-# Where to install
-ENV QUARTUS_PATH=/opt/intelFPGA_lite/${QUARTUS_VERSION}
-
 # Install things...
-RUN apt-get update && apt-get install -y \
+RUN apt-get update \
+ && apt-get install -y \
         curl \
         expect \
         locales \
         lsb-release \
-    && rm -rf /var/lib/apt/lists/*
-
-# Locale setup
-RUN echo "en_US.UTF-8 UTF-8" > /etc/locale.gen && \
-    locale-gen en_US.UTF-8 && \
-    /usr/sbin/update-locale LANG=en_US.UTF-8
+ && rm -rf /var/lib/apt/lists/* \
+ && echo "en_US.UTF-8 UTF-8" > /etc/locale.gen \
+ && locale-gen en_US.UTF-8 \
+ && /usr/sbin/update-locale LANG=en_US.UTF-8
 
 # Scripts
 COPY inc/setup /root/
 
 # Run the installation, clean up bad libs
+ARG QUARTUS_VERSION=17.0
+ARG QUARTUS_DOWNLOAD=http://download.altera.com/akdlm/software/acdsinst/17.0std.2/602/ib_tar/Quartus-lite-17.0.2.602-linux.tar
+ENV QUARTUS_PATH=/opt/intelFPGA_lite/${QUARTUS_VERSION}
+
 RUN mkdir -p /root/quartus && \
     cd /root/quartus && \
     (curl ${QUARTUS_DOWNLOAD} | tar xf -) && \
@@ -63,10 +58,6 @@ RUN mkdir -p /root/quartus && \
     rm -rf /root/quartus \
            ${QUARTUS_PATH}/quartus/linux64/libboost_system.so \
            ${QUARTUS_PATH}/quartus/linux64/libccl_curl_drl.so \
-           ${QUARTUS_PATH}/quartus/linux64/libstdc++.so.6
-
-# A clean second stage, just Quartus
-# This takes a lot of disk space to do, sadly.
-#FROM ubuntu:16.04
-#COPY --from=build ${QUARTUS_PATH} ${QUARTUS_PATH}
+           ${QUARTUS_PATH}/quartus/linux64/libstdc++.so.6 \
+           ${QUARTUS_PATH}/modelsim_ae
 
