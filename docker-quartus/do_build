@@ -1,8 +1,6 @@
 #!/bin/sh
 
 IMAGE_NAME=quartus-lite
-IMAGE_TAG=17.0
-QUARTUS_URL=http://download.altera.com/akdlm/software/acdsinst/17.0std.2/602/ib_tar/Quartus-lite-17.0.2.602-linux.tar
 
 args=""
 
@@ -11,8 +9,41 @@ then
     args="--no-cache=true"
 fi
 
-docker build -t ${IMAGE_NAME}:${IMAGE_TAG} \
-    --build-arg QUARTUS_VERSION=${IMAGE_TAG} \
-    --build-arg QUARTUS_DOWNLOAD=${QUARTUS_URL} \
-    $args .
+build () {
+    if [ -z "$1" ] || [ -z "$2" ]
+    then
+        echo "usage: build <quartus_version> <md5sum> [latest]"
+        exit 1
+    fi
+
+    myargs="${args} --pull"
+
+    QUARTUS_VERSION="$1"
+    QUARTUS_MD5="$2"
+
+    VERSION_MAJ=$(echo "${QUARTUS_VERSION}" | cut -d'.' -f1,2)  # 17.0.2.602 -> 17.0
+    VERSION_MIN=$(echo "${QUARTUS_VERSION}" | cut -d'.' -f3)    # 17.0.2.602 -> 2
+    VERSION_PAT=$(echo "${QUARTUS_VERSION}" | cut -d'.' -f4)    # 17.0.2.602 -> 602
+
+    # URL format:
+    # http://download.altera.com/akdlm/software/acdsinst/17.0std.2/602/ib_tar/Quartus-lite-17.0.2.602-linux.tar
+    URL="http://download.altera.com/akdlm/software/acdsinst/${VERSION_MAJ}std.${VERSION_MIN}/${VERSION_PAT}/ib_tar/Quartus-lite-${QUARTUS_VERSION}-linux.tar"
+
+    myargs="${myargs} --build-arg QUARTUS_DOWNLOAD=${URL}"
+    myargs="${myargs} --build-arg QUARTUS_VERSION=${VERSION_MAJ}"
+    myargs="${myargs} --build-arg QUARTUS_MD5=${QUARTUS_MD5}"
+    myargs="${myargs} --tag ${IMAGE_NAME}:${VERSION_MAJ}"
+
+    if [ "$3" = "latest" ]
+    then
+        myargs="${myargs} --tag ${IMAGE_NAME}:latest"
+    fi
+
+    echo "Calling docker build with: ${myargs}"
+
+    docker build $myargs .
+}
+
+#build 17.0.2.602 6FB433BF0A999C5B2BF3C0B43FE664A8
+build 17.1.1.593 46C00E9A0D96927B42F35C7F0E81A34E latest
 
