@@ -34,7 +34,7 @@ if {$install_path == ""} {
     set install_path "/opt/intelFPGA_lite/$version"
 }
 
-spawn /root/quartus/setup.sh
+spawn ./setup.sh
 
 expect {
     "Warning: You don't have enough disk space in"      {
