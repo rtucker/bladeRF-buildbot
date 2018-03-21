@@ -24,7 +24,7 @@
 FROM ubuntu:16.04
 
 LABEL maintainer="Rey Tucker <bladeRF-buildbot@reytucker.us>"
-LABEL version="0.0.1"
+LABEL version="0.1.0"
 LABEL description="Installer for Altera Quartus Prime"
 
 # Use local apt mirror
@@ -50,20 +50,23 @@ COPY inc/setup /root/
 # Run the installation, clean up bad libs
 ARG QUARTUS_VERSION
 ARG QUARTUS_DOWNLOAD
-ARG QUARTUS_MD5SUM
+ARG QUARTUS_MD5
 
 ENV QUARTUS_PATH=/opt/intelFPGA_lite/${QUARTUS_VERSION}
 
 RUN mkdir -p /tmp/inst /tmp/dl \
+ && echo "begin download" \
  && curl -o /tmp/dl/quartus.tar "${QUARTUS_DOWNLOAD}" \
- && echo "${QUARTUS_MD5SUM} /tmp/dl/quartus.tar" | md5sum -c - \
- && tar -C /tmp/inst -xf /tmp/dl/quartus.tar \
- && rm -rf /tmp/dl \
- && cd /tmp/inst \
- && /root/setup ${QUARTUS_VERSION} ${QUARTUS_PATH} \
+ && echo "begin verify" \
+ && echo "${QUARTUS_MD5} /tmp/dl/quartus.tar" | md5sum -c - \
+ && echo "begin untar" \
+ && tar -C /tmp/inst -xf /tmp/dl/quartus.tar && rm -rf /tmp/dl \
+ && echo "begin setup" \
+ && cd /tmp/inst && /root/setup ${QUARTUS_VERSION} ${QUARTUS_PATH} \
+ && echo "begin clean" \
  && rm -rf /tmp/inst \
            ${QUARTUS_PATH}/quartus/linux64/libboost_system.so \
            ${QUARTUS_PATH}/quartus/linux64/libccl_curl_drl.so \
            ${QUARTUS_PATH}/quartus/linux64/libstdc++.so.6 \
-           ${QUARTUS_PATH}/modelsim_ae
+ && echo "finish install"
 
