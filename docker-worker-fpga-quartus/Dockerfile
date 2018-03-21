@@ -21,7 +21,7 @@
 # SOFTWARE.
 
 ARG QUARTUS_BASEIMAGE=quartus-lite
-ARG QUARTUS_VERSION=17.0
+ARG QUARTUS_VERSION=17.1
 
 FROM ${QUARTUS_BASEIMAGE}:${QUARTUS_VERSION}
 
@@ -29,7 +29,7 @@ FROM ${QUARTUS_BASEIMAGE}:${QUARTUS_VERSION}
 ARG QUARTUS_VERSION=17.0
 
 LABEL maintainer="Rey Tucker <bladeRF-buildbot@reytucker.us>"
-LABEL version="0.0.1"
+LABEL version="0.0.2"
 LABEL description="Worker for building FPGA images"
 
 # Set up build arguments
@@ -38,14 +38,12 @@ ARG APT_MIRROR=mirrors.linode.com
 ARG DEFAULT_REVISION=HEAD
 
 # Set up environment variables
-ENV TZ=UTC
-ENV BINDIR=/bladerf
-ENV WORKDIR=/data/work
-ENV QUARTUS_SHORTVERSION=17.0
-ENV QUARTUS_LONGVERSION=17.0.2.602
-ENV QUARTUS_PATH=/opt/intelFPGA_lite/${QUARTUS_SHORTVERSION}
-ENV REVISION=${DEFAULT_REVISION}
-ENV BUILDCOMMAND=${BINDIR}/autobuild.sh
+ENV TZ=UTC \
+    BINDIR=/bladerf \
+    WORKDIR=/data/work \
+    QUARTUS_PATH=/opt/intelFPGA_lite/${QUARTUS_VERSION} \
+    REVISION=${DEFAULT_REVISION} \
+    BUILDCOMMAND=${BINDIR}/autobuild.sh
 
 # Use local mirror
 RUN sed -i -e "s|archive.ubuntu.com|${APT_MIRROR}|g" /etc/apt/sources.list
@@ -54,7 +52,9 @@ RUN sed -i -e "s|archive.ubuntu.com|${APT_MIRROR}|g" /etc/apt/sources.list
 RUN dpkg --add-architecture i386
 
 # Install things...
-RUN apt-get update && apt-get install -y \
+RUN apt-get update \
+ && apt-get upgrade -y \
+ && apt-get install -y \
         build-essential \
         clang \
         curl \
@@ -66,13 +66,11 @@ RUN apt-get update && apt-get install -y \
         locales \
         lsb-release \
         python3-boto3 \
-    && apt-get build-dep -y bladerf \
-    && rm -rf /var/lib/apt/lists/*
-
-# Locale setup
-RUN echo "en_US.UTF-8 UTF-8" > /etc/locale.gen && \
-    locale-gen en_US.UTF-8 && \
-    /usr/sbin/update-locale LANG=en_US.UTF-8
+ && apt-get build-dep -y bladerf \
+ && rm -rf /var/lib/apt/lists/* \
+ && echo "en_US.UTF-8 UTF-8" > /etc/locale.gen \
+ && locale-gen en_US.UTF-8 \
+ && /usr/sbin/update-locale LANG=en_US.UTF-8
 
 # User setup
 RUN groupadd -r bladerf \
