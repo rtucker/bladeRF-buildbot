@@ -21,6 +21,10 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
+# Note: to run this,
+# cd /path/to/clean/bladeRF/checkout
+# docker run --rm -i -t -v /sys:/sys:ro -v $(pwd):/build quartus-lite
+
 FROM ubuntu:16.04
 
 LABEL maintainer="Rey Tucker <bladeRF-buildbot@reytucker.us>"
@@ -35,8 +39,11 @@ RUN sed -i -e "s|archive.ubuntu.com|${APT_MIRROR}|g" /etc/apt/sources.list
 RUN apt-get update \
  && apt-get upgrade -y \
  && apt-get install -y \
+        build-essential \
         curl \
         expect \
+        libboost-system-dev \
+        libglib2.0-0 \
         locales \
         lsb-release \
  && rm -rf /var/lib/apt/lists/* \
@@ -69,4 +76,6 @@ RUN mkdir -p /tmp/inst /tmp/dl \
            ${QUARTUS_PATH}/quartus/linux64/libccl_curl_drl.so \
            ${QUARTUS_PATH}/quartus/linux64/libstdc++.so.6 \
  && echo "finish install"
+
+ENTRYPOINT ${QUARTUS_PATH}/nios2eds/nios2_command_shell.sh
 
