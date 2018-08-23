@@ -77,5 +77,7 @@ RUN mkdir -p /tmp/inst /tmp/dl \
            ${QUARTUS_PATH}/quartus/linux64/libstdc++.so.6 \
  && echo "finish install"
 
+WORKDIR /root
+
 ENTRYPOINT ${QUARTUS_PATH}/nios2eds/nios2_command_shell.sh
 
