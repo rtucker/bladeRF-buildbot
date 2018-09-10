@@ -79,5 +79,5 @@ RUN mkdir -p /tmp/inst /tmp/dl \
 
 WORKDIR /root
 
-ENTRYPOINT ${QUARTUS_PATH}/nios2eds/nios2_command_shell.sh
+ENTRYPOINT exec ${QUARTUS_PATH}/nios2eds/nios2_command_shell.sh -- $0 $@
 
