@@ -28,8 +28,8 @@
 FROM ubuntu:16.04
 
 LABEL maintainer="Rey Tucker <bladeRF-buildbot@reytucker.us>"
-LABEL version="0.1.0"
-LABEL description="Installer for Altera Quartus Prime"
+LABEL version="0.1.1"
+LABEL description="Intel Quartus Prime Lite Edition downloader and installer"
 
 # Use local apt mirror
 ARG APT_MIRROR=mirrors.linode.com
@@ -40,8 +40,10 @@ RUN apt-get update \
  && apt-get upgrade -y \
  && apt-get install -y \
         build-essential \
+        cmake \
         curl \
         expect \
+        git \
         libboost-system-dev \
         libglib2.0-0 \
         locales \
@@ -52,6 +54,7 @@ RUN apt-get update \
  && /usr/sbin/update-locale LANG=en_US.UTF-8
 
 # Scripts
+COPY inc/download.bash /root/
 COPY inc/setup /root/
 
 # Run the installation, clean up bad libs
@@ -61,23 +64,8 @@ ARG QUARTUS_MD5
 
 ENV QUARTUS_PATH=/opt/intelFPGA_lite/${QUARTUS_VERSION}
 
-RUN mkdir -p /tmp/inst /tmp/dl \
- && echo "begin download" \
- && curl -o /tmp/dl/quartus.tar "${QUARTUS_DOWNLOAD}" \
- && echo "begin verify" \
- && echo "${QUARTUS_MD5} /tmp/dl/quartus.tar" | md5sum -c - \
- && echo "begin untar" \
- && tar -C /tmp/inst -xf /tmp/dl/quartus.tar && rm -rf /tmp/dl \
- && echo "begin setup" \
- && cd /tmp/inst && /root/setup ${QUARTUS_VERSION} ${QUARTUS_PATH} \
- && echo "begin clean" \
- && rm -rf /tmp/inst \
-           ${QUARTUS_PATH}/quartus/linux64/libboost_system.so \
-           ${QUARTUS_PATH}/quartus/linux64/libccl_curl_drl.so \
-           ${QUARTUS_PATH}/quartus/linux64/libstdc++.so.6 \
- && echo "finish install"
+RUN bash /root/download.bash
 
 WORKDIR /root
 
 ENTRYPOINT exec ${QUARTUS_PATH}/nios2eds/nios2_command_shell.sh -- $0 $@
-
